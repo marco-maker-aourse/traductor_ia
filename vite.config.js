@@ -2,9 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// https://vite.dev/config/
 export default defineConfig({
-  base: './',
   plugins: [
     react(),
     VitePWA({
@@ -12,10 +10,10 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.svg', 'masked-icon.svg'],
       manifest: {
-        name: 'Traductor IA',
+        name: 'Traductor IA ML',
         short_name: 'Traductor IA',
         description:
-          'PWA móvil para traducir texto o voz con Gemini, historial local y reproducción por voz.',
+          'PWA movil para traducir texto o voz usando un backend Python con un modelo de machine learning.',
         theme_color: '#0f172a',
         background_color: '#f4f7fb',
         display: 'standalone',
@@ -39,29 +37,6 @@ export default defineConfig({
             sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'maskable',
-          },
-        ],
-      },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'google-fonts-stylesheets',
-            },
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-webfonts',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365,
-              },
-            },
           },
         ],
       },

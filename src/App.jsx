@@ -5,16 +5,16 @@ import LanguageSelector from './components/LanguageSelector'
 import TranslationResult from './components/TranslationResult'
 import VoiceInput from './components/VoiceInput'
 import { useLocalStorage } from './hooks/useLocalStorage'
-import { translateWithGemini } from './services/geminiTranslator'
 import { speakText, stopSpeaking } from './services/speechService'
+import { translateText } from './services/translationService'
 
 const LANGUAGES = [
-  { code: 'es-ES', label: 'Español', short: 'ES' },
-  { code: 'en-US', label: 'English', short: 'EN' },
-  { code: 'pt-BR', label: 'Português', short: 'PT' },
-  { code: 'fr-FR', label: 'Français', short: 'FR' },
-  { code: 'de-DE', label: 'Deutsch', short: 'DE' },
-  { code: 'it-IT', label: 'Italiano', short: 'IT' },
+  { code: 'es', locale: 'es-ES', label: 'Espanol', short: 'ES' },
+  { code: 'en', locale: 'en-US', label: 'English', short: 'EN' },
+  { code: 'pt', locale: 'pt-BR', label: 'Portugues', short: 'PT' },
+  { code: 'fr', locale: 'fr-FR', label: 'Francais', short: 'FR' },
+  { code: 'de', locale: 'de-DE', label: 'Deutsch', short: 'DE' },
+  { code: 'it', locale: 'it-IT', label: 'Italiano', short: 'IT' },
 ]
 
 const EMPTY_RESULT = {
@@ -24,8 +24,8 @@ const EMPTY_RESULT = {
 }
 
 function App() {
-  const [sourceLanguage, setSourceLanguage] = useState('es-ES')
-  const [targetLanguage, setTargetLanguage] = useState('en-US')
+  const [sourceLanguage, setSourceLanguage] = useState('es')
+  const [targetLanguage, setTargetLanguage] = useState('en')
   const [inputText, setInputText] = useState('')
   const [translation, setTranslation] = useState(EMPTY_RESULT)
   const [history, setHistory] = useLocalStorage('traductor-ia-history', [])
@@ -76,10 +76,8 @@ function App() {
       return
     }
 
-    if (!import.meta.env.VITE_GEMINI_API_KEY) {
-      setError(
-        'Falta configurar la API key de Gemini. Revisa el archivo .env antes de traducir.',
-      )
+    if (sourceLanguage === targetLanguage) {
+      setError('Selecciona idiomas distintos para traducir.')
       return
     }
 
@@ -87,7 +85,7 @@ function App() {
     setError('')
 
     try {
-      const result = await translateWithGemini({
+      const result = await translateText({
         text: sanitizedText,
         sourceLanguage: sourceLanguageMeta,
         targetLanguage: targetLanguageMeta,
@@ -126,7 +124,7 @@ function App() {
     try {
       setIsSpeaking(true)
       setError('')
-      await speakText(translation.translatedText, targetLanguage)
+      await speakText(translation.translatedText, targetLanguageMeta?.locale || 'en-US')
     } catch (speechError) {
       setError(
         speechError.message ||
@@ -146,7 +144,7 @@ function App() {
       await navigator.clipboard.writeText(translation.translatedText)
       setCopied(true)
     } catch {
-      setError('No se pudo copiar automáticamente. Revisa los permisos del navegador.')
+      setError('No se pudo copiar automaticamente. Revisa los permisos del navegador.')
     }
   }
 
@@ -172,11 +170,11 @@ function App() {
               Traductor IA
             </div>
             <h1 className="mt-4 text-3xl font-semibold leading-tight text-slate-950">
-              Traducciones naturales para conversaciones reales.
+              Traducciones rapidas para uso real.
             </h1>
             <p className="mt-3 max-w-sm text-sm leading-6 text-slate-600">
-              Escribe o dicta una frase y obtén una traducción contextual con voz,
-              historial y experiencia instalable tipo app.
+              Escribe o dicta una frase y obten una traduccion natural,
+              con historial, voz y experiencia instalable tipo app.
             </p>
           </div>
         </header>
@@ -209,7 +207,10 @@ function App() {
             />
           </div>
 
-          <label htmlFor="translation-input" className="mt-5 block text-sm font-medium text-slate-700">
+          <label
+            htmlFor="translation-input"
+            className="mt-5 block text-sm font-medium text-slate-700"
+          >
             Texto a traducir
           </label>
 
@@ -223,12 +224,10 @@ function App() {
             />
 
             <div className="mt-3 flex items-center justify-between gap-3">
-              <p className="text-xs text-slate-500">
-                {inputText.trim().length} caracteres
-              </p>
+              <p className="text-xs text-slate-500">{inputText.trim().length} caracteres</p>
 
               <VoiceInput
-                language={sourceLanguage}
+                language={sourceLanguageMeta?.locale || 'es-ES'}
                 onTranscript={(transcript) =>
                   setInputText((currentValue) =>
                     currentValue ? `${currentValue.trim()} ${transcript}` : transcript,
@@ -246,7 +245,7 @@ function App() {
             disabled={isLoading}
             className="mt-4 inline-flex w-full items-center justify-center rounded-[1.4rem] bg-slate-950 px-4 py-4 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {isLoading ? 'Traduciendo con Gemini...' : 'Traducir inteligentemente'}
+            {isLoading ? 'Traduciendo...' : 'Traducir ahora'}
           </button>
 
           {error ? (

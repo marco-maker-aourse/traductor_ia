@@ -1,6 +1,6 @@
 # Traductor IA
 
-PWA móvil creada con React + Vite + Tailwind CSS para traducir texto o voz con Gemini, guardar historial local y reproducir el resultado con voz.
+PWA movil creada con React + Vite + Tailwind CSS para traducir texto o voz con una integracion lista para usar, historial local y reproduccion hablada.
 
 ## Stack
 
@@ -10,28 +10,16 @@ PWA móvil creada con React + Vite + Tailwind CSS para traducir texto o voz con 
 - Web Speech API
 - SpeechSynthesis API
 - LocalStorage
-- Gemini API
 
 ## Variables de entorno
 
-1. Copia `.env.example` a `.env`
-2. Agrega tu clave:
+No se requieren variables de entorno en esta version.
 
 ```bash
-VITE_GEMINI_API_KEY=tu_api_key_aqui
+# archivo opcional, sin configuracion obligatoria
 ```
 
-## Comandos npm
-
-```bash
-npm install
-npm run dev
-npm run build
-npm run preview
-npm run deploy
-```
-
-## Ejecución local
+## Comandos
 
 ```bash
 cd C:\react\traductor_ia
@@ -40,41 +28,20 @@ copy .env.example .env
 npm run dev
 ```
 
-Luego abre la URL que te entregue Vite, normalmente:
+Para produccion:
 
 ```bash
-http://localhost:5173
+npm run build
+npm run preview
 ```
 
-## Deploy en GitHub Pages
+## Como funciona
 
-1. Crea un repositorio y sube el proyecto.
-2. Instala dependencias si aún no lo hiciste:
-
-```bash
-npm install
-```
-
-3. Publica:
-
-```bash
-npm run deploy
-```
-
-4. En GitHub, ve a `Settings > Pages`.
-5. Verifica que la rama publicada sea `gh-pages`.
-
-La configuración usa `base: './'`, así que funciona bien al desplegarse en GitHub Pages sin depender del nombre exacto del repositorio.
-
-## Uso en Android
-
-- Abre la app en Chrome.
-- Acepta permisos de micrófono para el dictado.
-- Usa `Instalar` o `Agregar a pantalla principal`.
-- Una vez instalada, correrá en modo standalone como app real.
+- El frontend realiza la traduccion de forma directa
+- No necesitas backend propio
+- La app mantiene historial local y soporte de voz
 
 ## Notas
 
-- El reconocimiento de voz funciona mejor en Chrome para Android.
-- Si Gemini no está configurado, la app mostrará un mensaje de error claro.
-- El historial guarda solo las últimas 5 traducciones en LocalStorage.
+- Evita usar la app con contenido sensible
+- El reconocimiento de voz funciona mejor en Chrome para Android
